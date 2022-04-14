@@ -65,3 +65,11 @@ fileFormat(file, arr, 50)
     })
 ```
 
+## urlParams
+
+```js
+const href = 'http://172.16.10.110:3006/#/test?name=123&age=23'
+const params = urlParams(href)
+// { name: 123, age: 23 }
+```
+
