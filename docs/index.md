@@ -5,7 +5,7 @@ heroAlt: carpe
 heroText: Carpe Helper
 tagline: ''
 actionText: Get Started
-actionLink: /index/
+actionLink: /utils/index.html
 features:
   - title: Simplicity First
     details: Minimal setup with markdown-centered project structure helps you focus on writing.
