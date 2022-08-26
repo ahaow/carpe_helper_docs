@@ -432,16 +432,193 @@ preconnect 即 DNS预连接
 
 ## 如何实现网页多标签tab通讯 
 
+### 使用websocket
+
+1. 无跨域限制
+2. 需要服务端支持，成本高
+
+### 通过localStorage
+
+1. 同域的 `A` 、`B` 两个页面
+2. 跨域不共享
+
+A页面
+
+```html
+<!DOCTYPE html>
+<body>
+    <button id="btn">点击</button>
+    <script>
+        const btn = document.getElementById("btn")
+        btn.addEventListener("click", () => {
+            const info = {
+                name: 'carpe',
+                age: 28,
+                date: +new Date(),
+            }
+            localStorage.setItem("info", JSON.stringify(info))
+        })
+    </script>
+</body>
+</html>
+```
+
+B页面
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <script>
+        window.addEventListener("storage", (event) => {
+            console.log("key", event.key)
+            console.log("newValue", event.newValue)
+        })
+    </script>
+</body>
+</html>
+```
+
+### 通过 SharedWorker 通讯
+
+* SharedWorker 是 WebWorker的一种
+* WebWorker 可开启子进程执行JS，但不能操作DOM
+* SharedWorker 单独开启一个进程，用于同域页面通讯
+
+A页面
+
+```html
+<script>
+    const worker = new SharedWorker('./worker.js')
+    const btn = document.getElementById("btn")
+    btn.addEventListener("click", () => {
+        worker.port.postMessage('detail go...');
+    })
+</script>
+```
+
+B页面
+
+```html
+<script>
+    const worker = new SharedWorker('./worker.js')
+    worker.port.onmessage = e => console.info('list', e)
+</script>
+```
+
+```js
+/**
+ * for SharedWorker
+ */
+
+const set = new Set
+
+onconnect = (event) => {
+    const port = event.ports[0]
+    set.add(port)
+    // 接收信息
+    port.onmessage = e => {
+        // 广播消息
+        set.forEach(p => {
+            p.postMessage(e.data)
+        })
+    }
+    port.postMessage('worker.js done')
+}
+```
+
+### 总结
+
+* websocket需要服务端，成本高
+* localStorage简单易用，推荐
+* SharedWorker调试不方便，不兼容IE11 
+
+
 ## 如何实现网页和iframe之间的通讯 
 
+parent
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    aaa 
+    <button id="btn">a发送信息</button>
+
+    <iframe id="iframe1" src="./B.html" frameborder="0"></iframe>
+
+    <script>
+        document.getElementById('btn').addEventListener("click", () => {
+            // console.log('window.iframe1', window.iframe1)
+            // console.log('window.iframe1.contentWindow', window.iframe1.contentWindow)
+            window.iframe1.contentWindow.postMessage('hello', '*') 
+        })
+        window.addEventListener("message", (event) => {
+            console.log('event', event)
+            console.log('origin', event.origin) // 来源的域名
+            console.log('data', event.data) // 来源的域名
+        })
+    </script>
+</body>
+</html>
+```
+
+child
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    bbb <button id="btn">b 发送信息</button>
+    <script>
+        document.getElementById('btn').addEventListener("click", () => {
+            window.parent.postMessage('world', '*')
+        })
+        window.addEventListener("message", (event) => {
+            console.log('child event', event)
+            console.log('child origin', event.origin) // 来源的域名
+            console.log('child data', event.data) // 来源的域名
+        })
+    </script>
+</body>
+</html>
+```
+
+### 总结
+
+1. 使用postMessage进行通信
+2. 监听message事件进行接收
+3. 注意跨域的限制和判断
+
+## ['1','2','3'].map(parseInt)
+
+**parseInt(str, radix)**
+
+1. 解析一个字符串, 并返回十进制整数
+2. 第一个参数str, 即要解析的字符串
+3. 第二个参数radix, 基数(进制), 范围2-36
+
+```js
+parseInt('100', 1) // NaN
+```
+
+**没有radix**
+
+* 当str以`Ox`开头, 按照16进制处理
+* 当str以`O`开头, 则按照8进制处理
+
+```js
+const nums = ['1','2','3']
+const res = nums.map((item, index) => {
+    // item: '1', index: 0 按照10进制处理 1 
+    // item: '2', index: 1 NaN
+    // item: '3', index: 2 NaN
+    return parseInt(item, index)
+})
 
 
-
-
-
-
-
-
+```
 
 
 
