@@ -1,5 +1,6 @@
+## 浏览器相关
 
-## 在浏览器输入URL回车之后发生什么？
+### 在浏览器输入URL回车之后发生什么？
 
 1. DNS解析 (将URL地址解析成IP地址的过程就叫DNS解析)
 2. TCP三次握手 (与服务器主机三次握手建立TCP连接)
@@ -22,7 +23,7 @@
 ```
 5. 页面渲染 (浏览器接收到服务器响应的HTML,CSS,JS文件后，将内容渲染出来)
 
-## DNS域名解析过程
+### DNS域名解析过程
 
 > DNS域名解析就是把域名转换成I地址的过程
 
@@ -44,7 +45,7 @@
 
 [原文地址](https://juejin.cn/post/7105387310698463263#heading-12)
 
-## TCP三次握手和四次挥手
+### TCP三次握手和四次挥手
 
 #### 三次握手
 
@@ -98,7 +99,7 @@ B：知道了，等一下，我还有话要说
 B：OK，我说完了
 A：好的，我知道了
 
-## 浏览器渲染页面的流程
+### 浏览器渲染页面的流程
 
 ```html
 <html>
@@ -136,30 +137,30 @@ A：好的，我知道了
 
 [参考文章](https://www.jianshu.com/p/e6252dc9be32)
 
-## 重绘repaint、重排reflow有什么区别
+### 重绘repaint、重排reflow有什么区别
 
-### 动态网页随时都会重绘和重排
+#### 动态网页随时都会重绘和重排
 
 * 网页动画
 * Modal 、Dialog 弹窗
 * 增加/删除一个元素、显示/隐藏一个元素
 
-### 重绘repaint
+#### 重绘repaint
 
 * 元素外观改变，如颜色、背景色
 * 元素的尺寸，定位不变，不会影响到其他元素的位置
 
-### 重排reflow
+#### 重排reflow
 
 * 重新计算尺寸和布局，可能会影响到其他元素的位置
 * 如元素高度增加，可能会使相邻元素位置下移
 
-### 区别
+#### 区别
 
 * 重排比重绘影响要大，消耗也大
 * 避免无意义的重拍
 
-### 减少重排的方法
+#### 减少重排的方法
 
 * 集中修改样式，或者直接切换css class
 * 修改之前先设置 display: none，脱离文档流
@@ -168,15 +169,15 @@ A：好的，我知道了
 * 使用createDocumentFragment批量操作DOM
 * 优化动画，使用css3 和 requestAnimationFrame, 避免js动画
 
-## BFC
+### BFC
 
 
 
-## CDN
+### CDN
 
 > CDN，简单来讲，就是你的网站服务器在黑龙江，怎么能让海南岛的用户快速访问呢？ 很简单，在广州再放一台
 
-### RTT
+#### RTT
 
 `RTT: Round-Trip Time` 往返时延，是指数据从网络一端传输到另一端所需要的时间，通常，时延由发送时延，传播时延，排队时延，处理时延四部分组成
 
@@ -184,7 +185,7 @@ A：好的，我知道了
 
 接入`CDN`就不一样了，海南的用户连接的是广州的服务器
 
-### cdn
+#### cdn
 
 `Content Delivery Network`: 内容分发网络
 
@@ -195,7 +196,7 @@ A：好的，我知道了
 1. 静态内容 （长期不需要改变的）
 2. 动态内容  
 
-### cdn分发流程
+#### cdn分发流程
 
 **静态内容**
 
@@ -208,21 +209,21 @@ A：好的，我知道了
 
 不表
 
-### 安全性和可靠性
+#### 安全性和可靠性
 
 1. 负载均衡（Server Load Balancer）是将访问流量根据转发策略分发到后端多台云服务器（ECS实例）的流量分发控制服务。**负载均衡扩展了应用的服务能力，增强了应用的可用性**
 2. CDN采用TLS/SSL证书(https安全证书)给网站进行保护
 
-### 一加一减
+#### 一加一减
 
 1. 加 加速器 
 2. 减 减少费用
 
-## Get和Post
+### Get和Post
 
-## Cookie、Session、jwt
+### Cookie、Session、jwt
 
-### cookie
+#### cookie
 
 * HTTP无状态，每次请求都要带上`cookie`，以帮助识别身份
 * 服务端也可以向客户端`set-cookie`, `cookie`大小限制`4kb`
@@ -232,7 +233,7 @@ cookie在HTML5之前也用于本地存储，但是在之后用`localStorage` 和
 
 现代浏览器开始禁用第三方cookie
 
-### cookie 和 session
+#### cookie 和 session
 
 * cookie 用于登录验证，存储用户标识(如userId)
 * session 在服务端，存储用户详细信息, 和 cookie信息一一对应
@@ -247,23 +248,23 @@ cookie在HTML5之前也用于本地存储，但是在之后用`localStorage` 和
 		2. 所有信息存入`cookie`不安全
 		2. 体积大，传输慢
 
-### cookie 和 token
+#### cookie 和 token
 
 * cookie是HTTP协议, 而token是自定义传递
 * cookie会被浏览器默认存储, 而token需要自己存储
 * token默认没有跨域限制
 
-### JWT(JSON WEB TOKEN)
+#### JWT(JSON WEB TOKEN)
 
 1. 前端发起登录, 后端验证成功之后, 返回一个加密的token
 2. 前端自行存储这个token(其中包括了用户信息, 加密了)
 
-### cookie 和 token 区别
+#### cookie 和 token 区别
 
 * cookie: HTTP标准，跨域限制，配合session使用
 * token: 无标准，无跨域限制，用于jwt
 
-### session 和 token 哪个更好
+#### session 和 token 哪个更好
 
 session优点: 
 
@@ -292,9 +293,9 @@ jwt缺点:
 1. 如果有严格管理用户信息的需求(保密，快速封禁) 推荐session
 2. 如果没有特殊要求, 使用jwt
 
-## 如何实现SSO单点登录（x）
+### 如何实现SSO单点登录（x）
 
-### 基于cookie
+#### 基于cookie
 
 1. cookie默认不可跨域共享，但有些情况下可设置为共享
 2. 主域名相同，如 `www.baidu.com`, `image.baidu.com`
@@ -302,60 +303,60 @@ jwt缺点:
 4. 主域名完全不同, 则cookie无法共享
 
 
-## HTTP 和 TCP/UDP 协议的区别
+### HTTP 和 TCP/UDP 协议的区别
 
-### 网络协议
+#### 网络协议
 
 1. HTTP协议在应用层
 2. TCP 和 UDP协议在传输层
 3. 严格来说应该是拿TCP 和 UDP协议来进行比较
 
-### TCP协议
+#### TCP协议
 
 * 三次握手
 * 四次挥手
 * 稳定传输
 
-### UDP协议
+#### UDP协议
 
 * 无连接 无断开
 * 不稳定传输，但效率高
 * 如视频会议、语音通话 
 
-### 答案
+#### 答案
 
 * HTTP是应用层，TCP 和 UDP是传输层
 * TCP有连接，有断开，稳定传输
 * UDP 无连接 无断开，不稳定传输，但效率高
 
-## HTTP1.0、1.1、2.0有什么区别
+### HTTP1.0、1.1、2.0有什么区别
 
-### 1.0
+#### 1.0
 
 * 最基本的HTTP协议
 * 支持最基本的GET、POST请求
 
-### 1.1
+#### 1.1
 
 * 增加了缓存策略 `cache-control` `E-tag`等
 * 支持长连接`Connection: keep-alive`, 一次TCP连接多次请求
 * 断点续传, 状态码206
 * 支持新的方法`PUT`, `DELETE`等, 可用于`restful api`
 
-### 2.0
+#### 2.0
 
 * 可压缩header, 减少体积
 * 多路复用，一次TCP连接中可以多个HTTP并发请求
 * 服务端推送
 
-## 什么是HTTPS中间人攻击？如何预防？（x）
+### 什么是HTTPS中间人攻击？如何预防？（x）
 
-### HTTPS加密协议
+#### HTTPS加密协议
 
 1. HTTP明文传输
 2. HTTPS加密传输 HTTP + TLS/SSL证书
 
-## script标签的defer和async有什么区别
+### script标签的defer和async有什么区别
 
 [![jjHJ5d.png](https://s1.ax1x.com/2022/07/24/jjHJ5d.png)](https://imgtu.com/i/jjHJ5d)
 
@@ -363,9 +364,9 @@ jwt缺点:
 * defer: HTML继续解析，并行下载JS，HTML解析完再执行JS
 * async: HTML继续解析，并行下载JS，执行JS，再解析HTML
 
-## link 中的属性
+### link 中的属性
 
-### preload
+#### preload
 
 资源在当前页面使用，会有优先加载
 
@@ -374,7 +375,7 @@ jwt缺点:
 <link rel="preload" href="xxx.css" as="style" />
 ```
 
-### prefetch 
+#### prefetch 
 
 资源在未来页面使用，空闲时加载
 
@@ -382,18 +383,18 @@ jwt缺点:
 <link rel="prefetch" href="xxx.js" as="script" />
 ```
 
-### dns-prefetch
+#### dns-prefetch
 
 dns-prefetch 即 DNS预查询
 
-### preconnect
+#### preconnect
 
 preconnect 即 DNS预连接
 
 
-## websocket 和 http协议的区别
+### websocket 和 http协议的区别
 
-### websocket
+#### websocket
 
 * 支持端到端通讯
 * 可以由client发起，也可以由server发起
@@ -404,21 +405,21 @@ preconnect 即 DNS预连接
 * 发起一个http请求
 * 成功之后再升级到websocket协议，再通讯
 
-### 区别
+#### 区别
 
 * websocket协议名是ws://, 可双端发起请求
 * websocket没有跨域限制
 * 通过send 和 onmessage通讯(HTTP通过req, res)
 
-## 轮询 、 长轮询、 websocket
+### 轮询 、 长轮询、 websocket
 
-### 轮询
+#### 轮询
 
 利用ajax，setInterval 定时向后端发起请求，例如每隔5s发一次请求，那么你的数据就会延迟高达5s
 
 特点： 数据延迟，消耗资源过大，请求次数太多了
 
-### 长轮询
+#### 长轮询
 
 利用ajax 和 队列 定时朝后端发起请求, 如果没有数据则会阻塞，但不会一直阻塞，比如阻塞你30，还没有返回数据，然后让客户端再次发起请求数据
 
@@ -426,18 +427,18 @@ preconnect 即 DNS预连接
 
 特点：相对于轮询基本没有消息延迟，请求次数降低了很多
 
-### websocket
+#### websocket
 
 特点：服务器和客户端建立了连接后，默认不会断开，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息
 
-## 如何实现网页多标签tab通讯 
+### 如何实现网页多标签tab通讯 
 
-### 使用websocket
+#### 使用websocket
 
 1. 无跨域限制
 2. 需要服务端支持，成本高
 
-### 通过localStorage
+#### 通过localStorage
 
 1. 同域的 `A` 、`B` 两个页面
 2. 跨域不共享
@@ -479,7 +480,7 @@ B页面
 </html>
 ```
 
-### 通过 SharedWorker 通讯
+#### 通过 SharedWorker 通讯
 
 * SharedWorker 是 WebWorker的一种
 * WebWorker 可开启子进程执行JS，但不能操作DOM
@@ -527,14 +528,14 @@ onconnect = (event) => {
 }
 ```
 
-### 总结
+#### 总结
 
 * websocket需要服务端，成本高
 * localStorage简单易用，推荐
 * SharedWorker调试不方便，不兼容IE11 
 
 
-## 如何实现网页和iframe之间的通讯 
+### 如何实现网页和iframe之间的通讯 
 
 parent
 
@@ -585,13 +586,13 @@ child
 </html>
 ```
 
-### 总结
+#### 总结
 
 1. 使用postMessage进行通信
 2. 监听message事件进行接收
 3. 注意跨域的限制和判断
 
-## ['1','2','3'].map(parseInt)
+### ['1','2','3'].map(parseInt)
 
 **parseInt(str, radix)**
 
@@ -616,7 +617,6 @@ const res = nums.map((item, index) => {
     // item: '3', index: 2 NaN
     return parseInt(item, index)
 })
-
 
 ```
 

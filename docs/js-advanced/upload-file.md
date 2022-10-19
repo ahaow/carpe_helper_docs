@@ -73,8 +73,6 @@ function check(headers) {
 </script>
 ```
 
-
-
 ### 现成的工具库
 
 第三库来实现文件检测的功能，比如 [file-type](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fsindresorhus%2Ffile-type%23readme) 这个库

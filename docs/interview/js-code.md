@@ -1,4 +1,7 @@
-## set, WeakSet
+
+## js-code
+
+### set, WeakSet
 
 > set对象允许你存储任何类型的唯一值(也是不重复的值的集合)，无论是基础对象还是引用对象
 
@@ -6,7 +9,7 @@ Set有`add`, `has`,`delete`,`size`, `clear`, `keys`, `values`, `forEach`, `entri
 
 WeakSet只有`add`, `has`, `delete`方法
 
-### 区别
+#### 区别
 
 1. WeakSet只有3个方法, Set则有多个方法
 2. WeakSet的成员只能是对象，不能有其他值，Set的成员可以是任意值
@@ -35,11 +38,11 @@ console.log(ws) // 有值，仅仅是因为垃圾回收机制还没有执行
 console.log(ws.has(obj)) // false
 ```
 
-### 为什么WeakSet没有 size, forEach, keys, values, entries 方法
+#### 为什么WeakSet没有 size, forEach, keys, values, entries 方法
 
 因为WeakSet是弱引用, 随时都会被垃圾回收掉, 但具体回收时间是不确定的, 所有不支持
 
-### WeakSet使用场景
+#### WeakSet使用场景
 
 ```html
 <!DOCTYPE html>
@@ -62,9 +65,9 @@ console.log(ws.has(obj)) // false
 </html>
 ```
 
-## Map 和 WeakMap
+### Map 和 WeakMap
 
-### Map
+#### Map
 
 `Map`类似于对象, 但是键名不限于字符串, `Object`结构提供于`键-值`, `Map`结构提供于`值-值`
 
@@ -75,21 +78,21 @@ map.set(btn, 'btn-map')
 console.log(map.get(btn))
 console.log(map)
 ```
-#### Map特点
+##### Map特点
 
 1. `Map`默认情况不包括任何键, 所有的键都是自己添加进去的, 不同于`Object`原型链上有一些默认的键
 2. `Map`的键可以是任何数据类型, 连函数都可以
 3. `Map`的键值个数可以通过`size`轻松获得, `Object`需要手动计算
 4. `Map`在频繁增删键值对的场景下性能要比`Object`
 
-#### 什么时候用Map
+##### 什么时候用Map
 
 1. 要添加的键值名和 Object 上的默认键值名冲突，又不想改名时，用 Map
 2. 需要 String 和 Symbol 以外的数据类型做键值时，用 Map
 3. 键值对很多，有需要计算数量时，用 Map
 4. 需要频繁增删键值对时，用 Map
 
-#### Map的实例属性和方法
+##### Map的实例属性和方法
 
 **实例属性**
 
@@ -99,9 +102,9 @@ console.log(map)
 
 `entries`, `keys`, `values`, `forEach`
 
-### WeakMap
+#### WeakMap
 
-#### WeakMap 和 Map区别
+##### WeakMap 和 Map区别
 
 1. WeakMap只能将对象作为键名
 2. WeakMap 的键名引用的对象是弱引用
@@ -109,7 +112,7 @@ console.log(map)
 
 关于强引用、弱引用：[](https://github.com/ahaow/knowledge/issues/5)
 
-#### 使用场景
+##### 使用场景
 
 **DOM节点元数据**
 

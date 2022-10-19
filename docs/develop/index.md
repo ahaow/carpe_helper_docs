@@ -1,6 +1,6 @@
-# develop
+## 工作开发
 
-## 前端 js 监听浏览器网络变化
+### 前端 js 监听浏览器网络变化
 
 核心 API: `navigator.connection`可以来获取设备的网络连接信息
 
@@ -26,7 +26,7 @@ if (navigator.connection && navigator.connection.onchange === null) {
 }
 ```
 
-## 下载附件 例如excel
+### 下载附件 例如excel
 
 ```js
 Axios({
@@ -51,7 +51,7 @@ Axios({
 [Blob地址](https://blog.csdn.net/yin_you_yu/article/details/116261304)
 
 
-## HtmlEncode
+### HtmlEncode
 
 ```js
 const HtmlEncode = (str) => {
