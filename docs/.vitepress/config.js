@@ -60,7 +60,7 @@ export default defineConfig({
                     },
                     {
                         text: '网络',
-                        link: '/interview/notework'
+                        link: '/interview/network'
                     }
                 ]
             }

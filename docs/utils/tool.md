@@ -2,40 +2,30 @@
 
 ## cloneDeep
 
-简易深拷贝 支持 `Object` 和 `Array`, 如果需要其他类型，去使用 `lodash`
-
-#### 案例
-
 ```js
-let obj = {
-    name: 'carpe',
-    age: 27,
-    address: ['成都', '达州'],
-    objects: {
-        first: 'first',
-        last: 'last'
-    }
+function isObject(source) {
+  return typeof source === "object" && source !== null;
 }
-let cloneObj = cloneDeep(obj)
+
+function cloneDeep(source, hash = new WeakMap()) {
+  if (!isObject(source)) {
+    return source;
+  }
+
+  if (hash.has(source)) {
+    return hash.get(source);
+  }
+
+  let target = Array.isArray(source) ? [] : {};
+  hash.set(source, target);
+
+  Reflect.ownKeys((key) => {
+    if (isObject(source[key])) {
+      target[key] = cloneDeep(source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  });
+  return target;
+}
 ```
-
-## dataType
-
-> 校验数据类型 类似 [object Object]
-
-#### 案例
-
-```js
-let obj = {}
-let type1 = dataType(obj) // object
-let arr = []
-let type2 = dataType(arr) // array
-```
-## urlParams
-
-```js
-const href = 'http://172.16.10.110:3006/#/test?name=123&age=23'
-const params = urlParams(href)
-// { name: 123, age: 23 }
-```
-
