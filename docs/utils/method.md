@@ -1,6 +1,6 @@
-# 工具库
+# 方法库
 
-## cloneDeep
+## 深拷贝
 
 ```js
 function isObject(source) {
@@ -27,5 +27,20 @@ function cloneDeep(source, hash = new WeakMap()) {
     }
   });
   return target;
+}
+```
+
+## 柯里化
+
+```js
+function curry(fn, length) {
+  length = length || fn.length;
+  return function (...args) {
+    if (args.length >= length) {
+      return fn.apply(this, args);
+    } else {
+      return curry(fn.bind(this, ...args), length - args.length);
+    }
+  };
 }
 ```
