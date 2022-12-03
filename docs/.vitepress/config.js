@@ -48,17 +48,17 @@ export default defineConfig({
         ],
       },
       {
-        text: "js",
+        text: "工作开发",
         items: [
           {
-            text: "array",
-            link: "/js/array",
+            text: "基础相关",
+            link: "/develop/base",
+          },
+          {
+            text: "插件相关",
+            link: "/develop/plug-in",
           },
         ],
-      },
-      {
-        text: "工作开发",
-        link: "/develop/index",
       },
       {
         text: "面试",
@@ -78,6 +78,15 @@ export default defineConfig({
           {
             text: "网络",
             link: "/interview/network",
+          },
+        ],
+      },
+      {
+        text: "技术相关",
+        items: [
+          {
+            text: "git",
+            link: "/technology/git",
           },
         ],
       },

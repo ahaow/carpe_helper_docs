@@ -44,3 +44,21 @@ function curry(fn, length) {
   };
 }
 ```
+
+## urlParams
+
+```js
+export const urlParams = (url) => {
+  let res = {};
+  if (url.includes("?")) {
+    let str = url.split("?")[1];
+    let arr = str.split("&");
+    arr.forEach((item) => {
+      let key = item.split("=")[0];
+      let value = item.split("=")[1];
+      res[key] = value;
+    });
+  }
+  return res;
+};
+```
