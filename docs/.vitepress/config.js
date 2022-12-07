@@ -30,6 +30,10 @@ export default defineConfig({
         text: "vue3",
         items: [
           {
+            text: "脚手架",
+            link: "/vue3/scaffold",
+          },
+          {
             text: "组件",
             link: "/vue3/component",
           },
