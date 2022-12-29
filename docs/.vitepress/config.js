@@ -9,10 +9,6 @@ export default defineConfig({
         text: "工具库",
         items: [
           {
-            text: "方法相关",
-            link: "/utils/method",
-          },
-          {
             text: "手写",
             link: "/utils/write",
           },
@@ -82,6 +78,18 @@ export default defineConfig({
           {
             text: "网络",
             link: "/interview/network",
+          },
+          {
+            text: "性能优化",
+            link: "/interview/performance",
+          },
+          {
+            text: "安全",
+            link: "/interview/safety",
+          },
+          {
+            text: "前后端通信",
+            link: "/interview/Front end communication",
           },
         ],
       },

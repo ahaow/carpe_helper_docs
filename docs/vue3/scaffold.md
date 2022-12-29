@@ -250,3 +250,33 @@ Prettier 按照 ESLint 规则来格式化代码的工具，但 Prettier 有默�
   "references": [{ "path": "./tsconfig.node.json" }]
 }
 ```
+
+### 配置 vite-plugin-svg-icons
+
+[地址](https://github.com/vbenjs/vite-plugin-svg-icons/blob/main/README.zh_CN.md)
+
+### 配置 vite-plugin-imagemin
+
+一个压缩图片资产的 vite 插件
+
+[地址](https://github.com/vbenjs/vite-plugin-imagemin)
+
+## 在 vue 项目中声明 ts 文件
+
+声明文件一定要放在 **src** 目录中
+
+### 声明 vue-router.d.ts
+
+```ts
+import { _RouteRecordBase } from "vue-router";
+// 同名接口会自动合并
+declare module "vue-router" {
+  interface _RouteRecordBase {
+    hidden?: boolean | string | number;
+  }
+  interface RouteMeta {
+    name?: string;
+    title: string;
+  }
+}
+```

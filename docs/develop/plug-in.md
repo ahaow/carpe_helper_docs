@@ -1,5 +1,65 @@
 # 插件相关
 
+## github 插件
+
+### mitt
+
+> Tiny 200 byte functional event emitter / pubsub.
+
+[地址](https://github.com/developit/mitt)
+
+### pdf 相关
+
+[pdfjs](https://github.com/mozilla/pdf.js)
+
+[pdfh5](https://github.com/gjTool/pdfh5)
+
+### 直播相关
+
+> hls.js 直播播放 m3u8 视频格式
+
+[hls.js](https://github.com/video-dev/hls.js)
+
+> flv.js 直播播放 flv 视频格式
+
+[flv.js](https://github.com/bilibili/flv.js)
+
+[基于 flv.js 的功能扩展插件](https://github.com/shady-xia/flvExtend)
+
+**关于 rtmp,flv,m3u8 区别**
+
+```md
+rtmp: 仅支持电脑还必须依赖 flash，而且负载不行, 小规模的可以用
+flv: 支持电脑和安卓手机, 但是不支持苹果手机, 延迟在 2~6s 左右, pc 端最常用, 安卓手机网页版需要依赖 flv.js 进行解码, 有一定的失败率, 苹果压根就不支持
+m3u8: 通用格式, 电脑和手机均支持, 缺点就是延迟比较高, 在 10~30s
+```
+
+### wordcloud
+
+词云
+
+[地址](https://github.com/timdream/wordcloud2.js)
+
+### html2canvas
+
+[地址](https://github.com/niklasvh/html2canvas)
+
+### qrcodejs2
+
+[地址](https://www.npmjs.com/package/qrcodejs2)
+
+### current-device
+
+> 查看当前系统,浏览器
+
+[地址](https://github.com/matthewhudson/current-device)
+
+### amfe-flexible
+
+> 可伸缩布局方案
+
+[地址](https://www.npmjs.com/package/amfe-flexible)
+
 ## 关于使用 tinymce 富文本编辑器
 
 ### 在 vue2 环境上使用 (基础使用)
@@ -21,6 +81,7 @@
 </script>
 ```
 
+````
 4. 新建 tinymce-setting.js 文件 进行配置
 
 ```js
@@ -107,3 +168,4 @@ external_plugins: {'mathjax': '/your-path-to-plugin/@dimakorotkov/tinymce-mathja
 
 - 在 toolbar 和 plugins 配置中 要加上 mathjax, tinymce-setting.js 中有体现出
 - 注意 external_plugins 和 mathjax 引入的 tinymce-mathjax 包 和 mathjax 包的地址， 版本号要匹配符合
+````
