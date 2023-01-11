@@ -78,6 +78,25 @@ function flattenDeep2(arr) {
 
 ### 数组去重
 
+```js
+let arr = [
+  1,
+  1,
+  "1",
+  "1",
+  true,
+  true,
+  "true",
+  {},
+  {},
+  "{}",
+  null,
+  null,
+  undefined,
+  undefined,
+];
+```
+
 **利用 Set**
 
 ```js
@@ -482,24 +501,64 @@ btn.addEventListener("click", throttleAjax);
 
 ```js
 function _new() {
-  // 1. 创建一个空对象
-  let obj = new Object();
-  // 2. 获取构造函数
+  // 1. 获取构造函数
   let _constructor = [].shift.call(arguments);
+  // 2. 创建一个空对象
+  let obj = new Object();
   // 3. 将构造函数的原型挂载到对象上
   obj.__proto__ = _constructor.prototype;
+
+  // const obj = Object.create(constructor.prototype);
+  // 等价于
+  // const obj = new Object();
+  // obj.__proto__ = _constructor.prototype;
+
   // 4. 将构造函数的实例挂载到对象上
   let result = _constructor.apply(obj, arguments);
   // 5. 优先返回
   return result instanceof Object ? result : obj;
 }
-
 function Person(name, age) {
   this.name = name;
   this.age = age;
 }
 let p1 = _new(Person, "carpe", 28);
 console.log(p1);
+```
+
+**关于第五步的补充**
+
+1. 如果构造函数没有显式`return`，（通常情况）那么`p1`就是新创建的对象`obj`
+2. 如果构造函数返回的不是一个对象，比如 1、"abc"、那么`p1`还是新创建的对象`obj`
+
+```js
+function Person() {
+  return 1;
+}
+```
+
+3. 如果构造函数显式返回了一个对象，比如 `{}` 、 `function() {}`, 那么 `p1` 就不是新创建的对象`obj`了, 而是显式`return`的这个对象
+
+```js
+function Person() {
+  // 函数也是对象
+  return function () {};
+}
+```
+
+4. so 在 `_new` 函数最后一句代码是:
+
+```js
+return result instanceof Object ? res : obj;
+```
+
+5. 注意: 模拟实现的函数`_new`传入的参数只能是构造函数，不能是类
+
+```js
+class Animal {}
+_new(Animal);
+
+// 会报错：Class constructor Animal cannot be invoked without 'new'// 类只能通过new来创建
 ```
 
 ### instanceof

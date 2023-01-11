@@ -45,6 +45,10 @@ export default defineConfig({
             text: "axios",
             link: "/vue3/axios",
           },
+          {
+            text: "基础",
+            link: "/vue3/basic",
+          },
         ],
       },
       {
