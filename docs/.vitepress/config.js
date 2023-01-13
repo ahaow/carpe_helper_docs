@@ -65,7 +65,7 @@ export default defineConfig({
         ],
       },
       {
-        text: "面试",
+        text: "知识点",
         items: [
           {
             text: "js(偏代码)",
@@ -74,6 +74,10 @@ export default defineConfig({
           {
             text: "js(偏理论)",
             link: "/interview/js-theory",
+          },
+          {
+            text: "实践",
+            link: "/interview/practice",
           },
           {
             text: "浏览器相关",

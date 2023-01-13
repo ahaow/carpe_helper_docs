@@ -622,3 +622,38 @@ const urlParams = (url) => {
   return res;
 };
 ```
+
+## 业务
+
+### setTimeout 实现 setInterval
+
+```js
+let timeWorker = {};
+
+function customInterval(fn, time) {
+  // 定义一个key, 来标识此定时器
+  let key = Symbol();
+  // 定义一个递归函数，持续调用定时器
+  function execute(fn, time) {
+    timeWorker[key] = setTimeout(() => {
+      fn();
+      execute(fn, time);
+    }, time);
+  }
+  execute(fn, time);
+  return key;
+}
+
+function customClearInterval(key) {
+  if (key in timeWorker) {
+    clearTimeout(timeWorker[key]);
+    delete timeWorker[key];
+  }
+}
+
+let time1 = costomInterval(() => {
+  console.log(111);
+}, 1000);
+
+console.log("time1", time1, timeWorker);
+```

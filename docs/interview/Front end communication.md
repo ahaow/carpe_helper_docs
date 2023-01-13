@@ -962,3 +962,435 @@ TCP 和 HTTP 的长连接是两种不同的技术，不存在谁依赖于谁。T
 关闭连接时，服务方收到对方的关闭请求时，仅仅表示对方不再发送数据了，但是仍然能够接收数据，而自己也未必全部数据都发送给对方了，所以己方可以立即关闭，也可以发送一些数据给对方后关闭。
 
 所以之所以是四次挥手而不是三次挥手，则是需要确保数据能够完全完成传输。
+
+## 跨域
+
+### 同源策略
+
+同源策略限制从一个源加载的文档或脚本如何与来自另一个源的资源进行交互。
+
+这是一个用于隔离潜在恶意文件的关键安全机制
+
+什么是源：协议，域名和端口， 这三者任一不同，就算跨域
+
+什么是限制：不是一个源的文档，没有权限去操作另一个源的文档，如：
+
+1. cookie、localStorage 和 indexDB 无法读取
+2. DOM 无法获得
+3. Ajax 请求发送成功，但是响应会被浏览器拦截
+
+### 跨域通信方式
+
+#### 1. JSONP(只支持 get 请求)
+
+> 通过 script 标签的异步加载实现，利用 script 标签不受同源策略的限制，天然可以跨域的特性
+
+```js
+const script = document.createElement("script");
+script.type = "text/javascript";
+script.src = "https://www.mock-api.com/?callback=jsonp";
+
+document.head.appendChild(script);
+
+function jsonp(...res) {
+  console.log("res", res);
+}
+```
+
+#### 2. Hash
+
+> url#后面的内容就叫 hash， hash 改变，页面不会刷新
+
+```js
+// 在 A 中伪代码
+const B = document.getElementsByTagName("iframe");
+B.src = B.src + "#" + "data";
+
+// 在 B 中的伪代码
+window.onhashchange = function () {
+  const { data } = window.location;
+};
+```
+
+#### postMessage
+
+> H5 新增的 postMessage() 方法，可以用来做跨域通信
+
+```js
+// 在 A 窗口
+const url = "...";
+const Bwindow = window.open(url);
+Bwindow.postMessage("data", url);
+
+// 在 B 窗口
+window.addEventListener(
+  "message",
+  function (event) {
+    console.log(event.origin); // A 窗口 url
+    console.log(event.source); // A 窗口 window 对象
+    console.log(event.data); // A 窗口传过来的数据
+  },
+  false
+);
+```
+
+#### websocket
+
+> WebSocket protocol 是 HTML5 一种新的协议，它实现了浏览器与服务器全双工通信，同时允许跨域通讯，是 server push 技术的一种很好的实现
+
+```js
+const ws = new WebSocket("wss://echo.websocket.org");
+
+ws.onopen = function (event) {
+  console.log("Connection open ...");
+  ws.send("Hello WebSockets");
+};
+
+ws.onmessage = function (event) {
+  console.log("Received Message: ", event.data);
+  ws.close();
+};
+
+ws.onclose = function (event) {
+  console.log("Connection closed");
+};
+```
+
+#### CORS(现代浏览器普遍跨域解决方法)
+
+> 整个 CORS 通信过程都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS 通信与同源的 AJAX 通信没有差别，代码完全一样。浏览器一旦发现 AJAX 请求跨域，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。因此，实现 CORS 通信的关键是服务器，只要服务器实现了 CORS 接口，就可以跨域通信
+
+**CORS 需要浏览器和服务端同时支持，IE8 和 9 需要通过 XSDomainRequeset 来实现**
+
+通过这种方式解决跨域问题，会在发送请求的时候出现两种情况，分别为 **简单请求** 和 **复杂请求**
+
+**1. 简单请求**
+
+只要同时满足以下两大条件，就属于简单请求
+
+1 使用下列方法之一：
+
+- GET
+- HEAD
+- POST
+
+2. Content-Type 的值仅限于以下三者之一：
+
+- text/plain
+- multipart/form-data
+- application/x-www-form-urlencoded
+
+请求中的任意 XMLHttpRequesetUpload 对象均没有注册任何事件监听器
+
+XMLHttpRequesetUpload 对象可以使用 XMLHttpRequeset.upload 属性访问
+
+**2. 复杂请求**
+
+不符合以上条件的就是复杂请求，复杂请求的 CORS 请求，会在正式通信之间，增加一次 HTTP 查询请求，称为 <i>预检请求</i>， 该请求的方法是 Option，通过该请来查询服务端是否允许跨域请求
+
+### 服务端实现 CORS 的方式
+
+---
+
+#### NodeJS
+
+```js
+// 以 express 为例
+app.all("*", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  next();
+});
+```
+
+#### Nginx
+
+```js
+server {
+  add_header Access-Control-Allow-Credentials true;
+  add_header Access-Control-Allow-Origin $http_origin;
+
+  location /file {
+    if($request_method = 'OPTIONS') {
+      add_header Access-Control-Allow-Origin $http_origin;
+      add_header Access-Control-Allow-Methods $http_access_control_request_methods;
+      add_header Access-Control-Allow-Credentials true;
+      add_header Access-Control-Allow-Headers $http_access_control_request_headers;
+      add_header Access-Control-Max-Age 1728000;
+      return 204;
+    }
+  }
+}
+```
+
+## 什么是 WebSocket
+
+### 定义
+
+WebSocket 是一个持久化的网络通信协议，可以在单个 TCP 连接上进行 **全双工通讯**，没有了 **Requeset** 和 **Response** 的概念，两者地位完全平等，连接一旦建立，客户端和服务端之间可以实时进行双向数据传输。
+
+### 关联和区别
+
+---
+
+#### HTTP
+
+1. HTTP 是非持久协议，客户端想知道服务端的处理进度只能通过长轮询或者是 long poll 的方式，但是前者对服务器压力大，后者则会因为一直等待响应造成阻塞
+
+[![pSuMiX4.png](https://s1.ax1x.com/2023/01/12/pSuMiX4.png)](https://imgse.com/i/pSuMiX4)
+
+2. 虽然 http1.1 默认开启了 `keep-alive` 长链接保持了这个 TCP 通道使得在一个 HTTP 连接中可以发送多个请求，接受多个响应，但是一个请求只能有一个响应，而且这个响应也是被动的，不能主动发起
+
+3. WebScoket 虽然是独立于 HTTP 的一种协议，但是 WebSocket 必须依赖 HTTP 协议进行一次握手（在握手阶段是一样的），握手成功后，数据是直接从 TCP 通道传输，与 HTTP 无关了，可以用一张图理解两者有交集，但不是全部。
+
+[![pSuMTER.png](https://s1.ax1x.com/2023/01/12/pSuMTER.png)](https://imgse.com/i/pSuMTER)
+
+#### socket
+
+1. socket 也被称为套接字，与 HTTP 和 WebSocket 不一样，socket 不是协议，它是在程序层面上对传输层协议（可以主要理解为 TCP/IP）的接口封装，可以理解为一个能够提供端对端的通信的调用接口（API）
+
+2. 对于程序员而言，其需要在 A 端创建一个 socket 实例，并为这个实例提供其所要连接的 B 端的 IP 地址和端口号，而在 B 端创建另一个 socket 实例，并且绑定本地端口号来进行监听。当 A 和 B 建立连接后，双方就建立了一个端对端的 TCP 连接，从而可以进行双向通信。WebSocket 借鉴了 socket 的思想，为客户端和服务端之间提供了类似的双向通信机制。
+
+### 应用场景
+
+WebSocket 可以做弹幕、消息订阅、多玩家游戏、协同编辑、股票基金实时报价、视频会议、在线教育、聊天室等应用实时监听服务端变化
+
+### WebSocket 握手
+
+- WebSocket 握手请求报文
+
+```md
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+Origin: http://example.com
+```
+
+下面是与传统 HTTP 报文不同的地方：
+
+```md
+Upgrade: websocket
+Connection: Upgrade
+```
+
+表示发起的是 WebSocket 协议
+
+```md
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+```
+
+`Sec-WebSocket-Key` 是由浏览器随机生成的，验证是否可以进行 WebSocket 通信，防止恶意或者无意的连接；
+
+`Sec-WebSocket-Protocol` 是用户自定义的字符串，用来标识服务所以需要的协议；
+
+`Sec-WebSocket-Version` 表示支持的 WebSocket 版本。
+
+- 服务端响应
+
+```md
+HTTP/1.1 101
+Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
+Sec-WebSocket-Protocol: chat
+```
+
+101 响应码 表示要转换协议。
+
+`Connection: Upgrade` 表示升级新协议请求
+
+`Upgrade: websocket` 表示升级为 WebSocket 协议
+
+`Sec-WebSocket-Accept` 是经过服务器确认，并加密过后的 `Sec-WebSocket-Key`， 用来证明客户端和服务端之间能够进行通信了。
+
+`Sec-WebSocket-Protocol` 表示最终使用的协议
+
+至此，客户端和服务器握手成功建立了 WebSocket 连接，HTTP 已经完成了他所有工作，接下来就是完全按照 WebSocket 协议进行通信。
+
+### 使用 WebSoeket(前端)
+
+---
+
+#### WebSocket 心跳
+
+可能会有某些未知情况导致 socket 断开，而客户端和服务端却不知道，需要客户端定时发送一个 **心跳 ping** 让服务端知道自己在线， 服务端也需要回复一个 **心跳 pong** 告诉客户端自己可用，否则视为断开
+
+#### WebSocket 状态
+
+WebSocket 对象中的 readyState 属性有四种状态：
+
+- 0: 表示正在连接
+- 1: 表示连接成功，可以通信了
+- 2: 表示连接正在关闭
+- 3: 表示连接已经关闭，或者打开连接失败
+
+#### 代码演示
+
+```ts
+import emitter from "@/mitt/index";
+import { clearRepetition } from "@/utils";
+import cloneDeep from "@/utils/cloneDeep";
+
+export const wsChatMsg = "ws-chat-msg";
+export const wsWatchInfo = "ws-watch-info";
+export const wsLiveNotice = "ws-live-notice";
+export const wsRandomSelect = "ws-random-select";
+
+interface WsBodyProp {
+  c: number;
+  d: DProp;
+  u?: UProp[];
+}
+
+interface DProp {
+  r: string; // 活动id
+  n: string; // 聊天人用户名
+  i: string; // 用户人id
+  f: string; // 活动头像
+  m: string; // 聊天内容
+  t: string | number; // 发送时间
+  org?: string;
+  isAdmin?: boolean | string;
+}
+
+interface UProp {
+  f: string;
+  i: string;
+  isAdmin: string;
+  n: string;
+  org: string;
+}
+
+interface OptionsProp {
+  id: string;
+  token: string;
+  username: string;
+  userId: string;
+  userFace: string;
+}
+
+export interface chatMsgInfoProp {
+  id: string;
+  talkInfo: string;
+  talkManName: string;
+  avatar: string;
+  type: string;
+}
+
+class Ws {
+  static instance: any = null;
+  url: string;
+  ws: null | WebSocket;
+  heartbeatTimer: null | number;
+  options: null | OptionsProp;
+  constructor(url: string, options: OptionsProp) {
+    this.url = url;
+    this.initWs();
+    this.options = options;
+  }
+
+  static getInstance(url: string, options: OptionsProp) {
+    if (!Ws.instance) {
+      Ws.instance = new Ws(url, options);
+    }
+    return Ws.instance;
+  }
+  stringify(obj: any) {
+    return JSON.stringify(obj);
+  }
+  parse(obj: any) {
+    return JSON.parse(obj);
+  }
+  initWs() {
+    this.ws = new WebSocket(this.url);
+    this.ws.onopen = this.onopen.bind(this);
+    this.ws.onmessage = this.onmessage.bind(this);
+    this.ws.onerror = this.onerror.bind(this);
+    this.ws.onclose = this.onclose.bind(this);
+  }
+  onopen() {
+    window.console.log("ws连接成功2", this);
+    this.setHeartbeat();
+  }
+  onmessage(msg: any) {
+    const data: WsBodyProp = JSON.parse(msg.data);
+    switch (data.c) {
+      case 1000:
+        this.chatMsg(data);
+        return;
+      case 1001:
+        this.watchInfo(data);
+        return;
+      case 1111:
+        this.liveNotice(data);
+        return;
+      default:
+        window.console.error("没有找到匹配");
+    }
+  }
+  onerror() {
+    window.console.log("连接失败,正在重连...");
+  }
+  onclose() {
+    window.console.log("通讯连接已关闭, 需要重新刷新连接");
+  }
+  // 设置心跳
+  setHeartbeat() {
+    const heartbeaInfo: WsBodyProp = {
+      c: 1001,
+      d: {
+        r: this.options.id,
+        n: this.options.username,
+        i: this.options.userId,
+        f: this.options.userFace,
+        m: "",
+        t: "",
+        org: "",
+        isAdmin: false,
+      },
+    };
+    this.removeHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      this.ws.send(this.stringify(heartbeaInfo));
+    }, 50 * 1000);
+  }
+  // 清除心跳
+  removeHeartbeat() {
+    clearTimeout(this.heartbeatTimer);
+    this.heartbeatTimer = null;
+  }
+  // 发送消息
+  send(msg: string) {}
+  // 关闭ws
+  closeWs() {
+    this.removeHeartbeat();
+    this.ws.close();
+  }
+  // 处理聊天信息
+  chatMsg(data: WsBodyProp) {}
+  // 处理观看人数及信息
+  watchInfo(data: WsBodyProp) {}
+  // 处理直播公告
+  liveNotice(data: WsBodyProp) {}
+  // 处理随机选人
+  ramdomSelectPerson(data: WsBodyProp) {}
+}
+
+export default Ws;
+```
+
+```vue
+<script lang="ts" setup>
+onMounted(() => {
+  wsInstance = Ws.getInstance();
+});
+</script>
+```
