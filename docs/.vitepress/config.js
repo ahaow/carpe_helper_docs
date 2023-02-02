@@ -68,6 +68,10 @@ export default defineConfig({
         text: "知识点",
         items: [
           {
+            text: "css",
+            link: "/interview/css",
+          },
+          {
             text: "js(偏代码)",
             link: "/interview/js-code",
           },

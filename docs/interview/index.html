@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const activity = new Map([
+        ["pre", (price) => price * 0.95],
+        ["onSale", (price) => price * 0.9],
+        ["back", (price) => price * 0.85],
+        ["limit", (price) => price * 0.8],
+      ]);
+
+      const getActivityPrice = (type, price) => activity.get(type)(price);
+
+      console.log(getActivityPrice("back", 100));
+    </script>
+  </body>
+</html>
