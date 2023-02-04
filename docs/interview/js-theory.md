@@ -181,3 +181,66 @@ function test() {
 2. 并且由于剩余空闲内存不是一整块，它是由不同大小内存组成的内存列表, 这就牵扯到了内存分配到问题
 
 
+## 数组相关
+
+### 类数组
+
+<div style="margin-top:24px;"></div>
+
+类数组：是有一个 `length` 属性 和 从零开始索引的属性， 但是没有Array的内置方法，比如 `forEach` 和 `map`
+
+特征：
+
+1. 是一个普通对象
+2. 必须有length属性，可以有非负整数索引
+3. 本身不具备数组所具备的方法
+
+常见类数组：
+
+1. arguments
+2. DOM相关，NodeList, HTMLCollection, DOMTokenList
+
+奇特：
+
+字符串：具备类数组的所有特性，但是类数组一般指对象
+
+#### 数组 和 类数组的区别
+
+|               | 数组              | 类数组             |
+| ------------- | ----------------- | ------------------ |
+| toString返回  | [object Array]    | [object Object]    |
+| instanceof    | Array             | Object             |
+| constructor   | [Function: Array] | [Function: Object] |
+| Array.isArray | true              | false              |
+
+
+
+
+#### 代码判断类数组
+
+```js
+function isArrayLikeObject(arr) {
+    if (arr == null || typeof arr !== "object") return false
+    const lengthMaxValue = Math.pow(2, 53) -1;;
+    if (!Object.prototype.hasOwnProperty.call(arr, "length"))
+        return false;
+
+    if (typeof arr.length != "number") return false;
+    if (!isFinite(arr.length)) return false;
+    if (Array === arr.constructor) return false;
+
+    if (arr.length >= 0 && arr.length < lengthMaxValue) {
+        return true
+    } else {
+        return false
+    }
+}
+```
+
+#### 类数组如何转为数组
+
+* slice, concat
+* Array.from
+* Array.apply
+* 复制，遍历
+
