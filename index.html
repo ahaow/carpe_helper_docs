@@ -1,18 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <script>
-        function isArrayLikeObject(arr) {
-    if (arr == null || typeof arr !== "object") return false
-    const lengthMaxValue = Math.pow(2, 53) -1;;
-    if (!Object)
-}
+      // 万能数据生成器
+      const createValues = (creator, length = 10) =>
+        Array.from({ length }, creator);
+
+      // 随机数据生成器
+      function randomScope() {
+        return Math.random() * 100;
+      }
+      const createRandomValues = (len) => createValues(randomScope, len);
+      console.log(createRandomValues(10));
+
+      // 序列生成器
+      const createRange = (start, stop, step) =>
+        createValues((_, i) => start + i * step, (stop - start) / step + 1);
+      console.log(createRange(0, 100, 10));
+
+      // 数据生成器
+      function createUser(v, index) {
+        return {
+          name: `user-${index}`,
+          age: (Math.random() * 100) >> 0,
+        };
+      }
+      const users = createValues(createUser, 10);
+      console.log(users);
+
+      // 清空数据
+      // Array.prototype.splice(0);
+      // Array.prototype.length = 0;
+      // arr = []
+
+      // 数据去重
+
+      // 从数据删除虚值
+      const arr1 = [
+        false,
+        0,
+        undefined,
+        ,
+        "",
+        NaN,
+        9,
+        true,
+        undefined,
+        null,
+        "test",
+      ];
+      const newArray = arr1.filter(Boolean);
+      console.log("newArray", newArray);
+
+      // 获取数组最大值或者最小值
+      const arr2 = [1, 2, 3];
+      console.log(Math.max.apply(Math, arr2));
+      console.log(Math.min.apply(Math, arr2));
+
+      // queryString
+      const urlObj = window.location.search
+        .slice(1)
+        .split("&")
+        .filter(Boolean)
+        .reduce(function (obj, cur) {
+          let arr = cur.split("=");
+          if (arr.length != 2) {
+            return obj;
+          }
+          obj[decodeURIComponent(arr[0])] = decodeURIComponent(arr[1]);
+          return obj;
+        }, {});
+      console.log("urlObj", urlObj);
+      console.log(urlObj["name"]);
+      console.log(urlObj["age"]);
+
+      // 数组分组
+      const hasOwn = Object.prototype.hasOwnProperty;
+
+      function group(arr, fn) {
+        // 不是数组
+        if (Array.isArray(arr)) {
+          return arr;
+        }
+        // 不是函数
+        if (typeof fn != "function") {
+          throw new TypeError("fn必须是一个函数");
+        }
+        let v;
+        return arr.reduce((obj, cur, index) => {
+          v = fn(cur, index);
+          if (!hasOwn.call(obj, v)) {
+            obj[v] = [];
+          }
+          obj[v].push(cur);
+          return obj;
+        }, {});
+      }
+
+      let result = group(
+        [
+          {
+            name: "carpe",
+            score: 60,
+          },
+          {
+            name: "jim",
+            score: 30,
+          },
+          {
+            name: "nick",
+            score: 88,
+          },
+        ],
+        (v) => v.score > 60
+      );
+      console.log("result", result);
     </script>
-</body>
+  </body>
 </html>
