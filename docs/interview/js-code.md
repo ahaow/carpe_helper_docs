@@ -1,5 +1,7 @@
 ## js-code
 
+### 执行上下文
+
 ### set, WeakSet
 
 > set 对象允许你存储任何类型的唯一值(也是不重复的值的集合)，无论是基础对象还是引用对象
@@ -14,28 +16,28 @@ WeakSet 只有`add`, `has`, `delete`方法
 2. WeakSet 的成员只能是对象，不能有其他值，Set 的成员可以是任意值
 
 ```js
-let set = new Set([1, "2", {}, {}, function () {}, 3, null, undefined]);
+let set = new Set([1, '2', {}, {}, function () {}, 3, null, undefined])
 
-let ws = new WeakSet();
+let ws = new WeakSet()
 // ws.add(1)  Invalid value used in weak set
-ws.add({});
+ws.add({})
 ```
 
 3. WeakSet 中的对象都是弱引用, 即垃圾回收机制不考虑 WeakSet 对该对象的引用, 也就是说如果其他对象不再引用该对象, 那么垃圾回收机制会自动回收该对象所占用的内存，不会考虑对象还在 WeakSet 中（核心）
 
 ```js
 let obj = {
-  name: "carpe",
-};
-let ws = new WeakSet();
-ws.add(obj);
+    name: 'carpe',
+}
+let ws = new WeakSet()
+ws.add(obj)
 
-console.log(ws);
-console.log(ws.has(obj)); // true
+console.log(ws)
+console.log(ws.has(obj)) // true
 
-obj = null;
-console.log(ws); // 有值，仅仅是因为垃圾回收机制还没有执行
-console.log(ws.has(obj)); // false
+obj = null
+console.log(ws) // 有值，仅仅是因为垃圾回收机制还没有执行
+console.log(ws.has(obj)) // false
 ```
 
 #### 为什么 WeakSet 没有 size, forEach, keys, values, entries 方法
@@ -47,21 +49,21 @@ console.log(ws.has(obj)); // false
 ```html
 <!DOCTYPE html>
 <html lang="en">
-  <body>
-    <div id="wrap">
-      <button id="btn">确认</button>
-    </div>
-    <script>
-      const wrap = document.getElementById("wrap");
-      const btn = document.getElementById("btn");
-      const disableElemenets = new WeakSet();
-      disableElemenets.add(btn);
+    <body>
+        <div id="wrap">
+            <button id="btn">确认</button>
+        </div>
+        <script>
+            const wrap = document.getElementById('wrap')
+            const btn = document.getElementById('btn')
+            const disableElemenets = new WeakSet()
+            disableElemenets.add(btn)
 
-      btn.addEventListener("click", () => {
-        wrap.removeChild(btn);
-      });
-    </script>
-  </body>
+            btn.addEventListener('click', () => {
+                wrap.removeChild(btn)
+            })
+        </script>
+    </body>
 </html>
 ```
 
@@ -72,11 +74,11 @@ console.log(ws.has(obj)); // false
 `Map`类似于对象, 但是键名不限于字符串, `Object`结构提供于`键-值`, `Map`结构提供于`值-值`
 
 ```js
-const btn = document.getElementById("btn");
-const map = new Map();
-map.set(btn, "btn-map");
-console.log(map.get(btn));
-console.log(map);
+const btn = document.getElementById('btn')
+const map = new Map()
+map.set(btn, 'btn-map')
+console.log(map.get(btn))
+console.log(map)
 ```
 
 ##### Map 特点
@@ -120,19 +122,19 @@ console.log(map);
 因为 weakMap 不会影响垃圾回收，所以可以用来关联元数据
 
 ```js
-const map = new Map();
-const btn = document.getElementById("btn");
+const map = new Map()
+const btn = document.getElementById('btn')
 // 给这个节点关联一些元数据
-map.set(btn, { disabled: true });
-document.body.removeChild(btn);
+map.set(btn, { disabled: true })
+document.body.removeChild(btn)
 // 当上面代码执行后，登录按钮从DOM树中被删除了，但由于 Map 对节点对象是强引用关系，仍然保存着对按钮的引用，所以会引起内存泄漏
 ```
 
 ```js
-const wm = new WeakMap();
-const btn = document.getElementById("btn");
-wm.set(btn, { disabled: true });
-document.body.removeChild(btn);
+const wm = new WeakMap()
+const btn = document.getElementById('btn')
+wm.set(btn, { disabled: true })
+document.body.removeChild(btn)
 ```
 
 ## setTimeout 模拟 setInterval
@@ -148,37 +150,37 @@ setInterval 的作用就是每隔一段指定时间执行一个函数，但是�
 ### setInterval 存在的问题（案例）
 
 ```js
-let startTime = new Date().getTime();
-let count = 0;
+let startTime = new Date().getTime()
+let count = 0
 
 setInterval(() => {
-  count++;
-  console.log(
-    `与原设定的间隔时差了${
-      new Date().getTime() - (startTime + count * 1000)
-    }毫秒`
-  );
-}, 1000);
+    count++
+    console.log(
+        `与原设定的间隔时差了${
+            new Date().getTime() - (startTime + count * 1000)
+        }毫秒`
+    )
+}, 1000)
 ```
 
 ```js
-let startTime = new Date().getTime();
-let count = 0;
+let startTime = new Date().getTime()
+let count = 0
 
 // 增加一个耗时任务
 setInterval(() => {
-  let i = 0;
-  while (i++ < 1000000000);
-}, 0);
+    let i = 0
+    while (i++ < 1000000000);
+}, 0)
 
 setInterval(() => {
-  count++;
-  console.log(
-    `与原设定的间隔时差了${
-      new Date().getTime() - (startTime + count * 1000)
-    }毫秒`
-  );
-}, 1000);
+    count++
+    console.log(
+        `与原设定的间隔时差了${
+            new Date().getTime() - (startTime + count * 1000)
+        }毫秒`
+    )
+}, 1000)
 ```
 
 **setInterval**的缺点，也就显而易见了：
