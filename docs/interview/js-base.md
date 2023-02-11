@@ -188,3 +188,267 @@ ECStack.pop();
 ```
 
 ### 变量对象
+
+变量对象是与执行上下文相关的数据作用域，存储了在上下文中定义的变量和函数声明
+
+因为不同执行上下文的变量对象稍有不同，所以有区分于：全局上下文的变量对象和函数上下文的变量对象
+
+#### 全局上下文
+
+**全局对象**
+
+全局对象是预定义的对象，作为 js 的全局函数和全局属性的占位符，通过使用全局对象，可以访问所有其他所有预定的对象，函数和属性
+
+1. 可以通过 this 引用，在客户端 js 中，全局对象就是 window
+
+```js
+console.log(this)
+```
+
+2. 全局对象是由 Object 构造函数实例化的一个对象
+
+```js
+console.log(this instanceof Object)
+```
+
+3. 预定义了一堆函数和属性
+
+```js
+console.log(Math.random())
+console.log(this.Math.random())
+```
+
+4. 作为全局变量的宿主
+
+```js
+var a = 1
+console.log(this.a)
+```
+
+5. 客户端 js 中，全局对象有 window 属性指向自身
+
+```js
+var a = 1
+console.log(window.a)
+
+this.window.b = 2
+console.log(this.b)
+```
+
+**总结** 全局上下文中的变量对象就是全局对象
+
+#### 函数上下文
+
+在函数上下文中，我们用活动对象来表示变量对象
+
+活动对象是在进入函数上下文时被创建的，它通过函数的 arguments 属性初始化，arguments 属性值是 Arguments 对象
+
+#### 函数上下文执行过程
+
+执行上下文的代码会分为两个阶段进行处理： 分析和执行
+
+1. 进入执行上下文
+2. 代码执行
+
+**进入执行上下文**
+
+当进入执行上下文时，这时候还没有执行代码
+
+变量对象会包括：
+
+1. 函数的所有形参（如果是函数上下文）
+    1. 由名称和对应值组成的一个变量对象的属性被创建
+    2. 没有实参，属性值设置为 undefined
+2. 函数声明
+    1. 由名称和对应值（函数对象（function-object））组成一个变量对象的属性被创建
+    2. 如果变量对象已经存在相同名称的属性，则完全替换这个属性
+3. 变量声明
+    1. 由名称和对应值（undefined）组成一个变量对象的属性被创建
+    2. 如果变量名称跟已经声明的形参和函数相同，则变量声明不会干扰已经存在的这类属性
+
+**示例**
+
+```js
+function foo(a) {
+    var b = 2
+    function c() {}
+    var d = function () {}
+    b = 3
+}
+foo(1)
+```
+
+在进入执行上下文后，这时候的 AO 是：
+
+```js
+AO = {
+  arguments: {
+    0: 1,
+    lenght: 1
+  }
+  a: 1,
+  b: undefiend,
+  c: reference to function c() {},
+  d: undefined
+}
+```
+
+**代码执行**
+
+在执行阶段，会顺序执行代码，根据代码，修改变量对象的值
+
+```js
+AO = {
+  arguments: {
+    0: 1,
+    length: 1
+  },
+  a: 1,
+  b: 3,
+  c: reference to function c() {},
+  d: reference to FunctionExpression "d"
+}
+```
+
+#### 总结
+
+1. 全局上下文的变量对象初始化是全局对象
+2. 函数上下文的变量对象初始化只包括 Arguments 对象
+3. 在进入执行上下文时会给变量添加形参，函数声明，变量声明等初始的属性值
+4. 在代码执行阶段，会再次修改变量对象的属性值
+
+### 作用域链
+
+**当查找变量的时候，会先从当前上下文的变量对象中查找，如果没有找到，就会从父级（词法层面上的父级）执行上下文的变量对象中查找，一直找到全局上下文的变量对象，也就是全局对象**
+
+这样由多个执行上下文的变量对象构成的链表就叫做作用域链
+
+#### 函数创建
+
+函数的作用域在函数定义的时候就决定了
+
+因为函数有一个内部属性 `[[scope]]`，当函数创建的时候，就会保存所有的父变量对象到其中，可以理解 `[[scope]]` 就是所有父变量对象的层级链，但是注意：`[[scope]]` 并不代表完整的作用域链
+
+**示例**
+
+```js
+function foo() {
+    function bar() {}
+}
+```
+
+函数创建时，各自的`[[scope]]`为：
+
+```js
+foo.[[scope]] = [
+  globalContext.VO
+]
+
+bar.[[scope]] = [
+  fooContext.AO,
+  globalContext.VO
+]
+```
+
+#### 函数激活
+
+当函数激活时，进入函数上下文，创建 VO/AO 后， 就会将活动对象添加到作用域链的前端
+
+这时候执行上下文的作用域链，我们命名为 Scope
+
+```md
+Scope = [AO].concat([[Scope]])
+```
+
+至此，作用域链创建完毕
+
+#### 捋一捋
+
+以下面的例子为例，结合着之前讲的变量对象和执行上下文栈，我们来总结一下函数执行上下文中作用域链和变量对象的创建过程：
+
+```js
+var scope = 'global scope'
+function checkscope() {
+    var scope2 = 'local scope'
+    return scope2
+}
+checkscope()
+```
+
+执行过程如下：
+
+1. checkscope 函数被创建，保存作用域链到内部属性`[[scope]]`
+
+```js
+checkscope.[[scope]] = {
+  globalContext.VO
+}
+```
+
+2. 执行 checkscope 函数， 创建 checkscope 函数执行上下文， checkscope 函数执行上下文被压入执行上下文栈
+
+```js
+ECStack = [checkscopeContext, globalContext]
+```
+
+3. checkscope 函数并不立即执行, ，开始做准备工作，第一步： 复制函数 `[[scope]]`创建作用域链
+
+```js
+checkscopeContext = {
+  Scope: checkscope.[[scope]]
+}
+```
+
+4. 第二步：用 arguments 创建活动对象，随后初始化活动对象，加入形参，函数声明，变量声明
+
+```js
+checkscopeContext = {
+    AO: {
+        arguments: {
+            length: 0,
+        },
+        scope2: undefined,
+    },
+   Scope: checkscope.[[scope]],
+}
+```
+
+5. 第三步：将活动对象压入 checkscope 作用域链顶端
+
+```js
+checkscopeContext = {
+    AO: {
+        arguments: {
+            length: 0,
+        },
+        scope2: undefined,
+    },
+    Scope: [AO, [[scope]]],
+}
+```
+
+6. 准备工作做完，开始执行函数，随着函数的执行，修改 AO 的属性值
+
+```js
+checkscopeContext = {
+    AO: {
+        arguments: {
+            length: 0,
+        },
+        scope2: `local scope`,
+    },
+    Scope: [AO, [[scope]]],
+}
+```
+
+7. 查找到 scope2 的值，返回后函数执行完毕，函数上下文从执行上下文栈中弹出
+
+```js
+ECStack = [globalContext]
+```
+
+## this 全面解析
+
+### 5 种 this 绑定
+
+#### 12312

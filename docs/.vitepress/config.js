@@ -3,7 +3,26 @@ export default defineConfig({
   title: "carpe_helper",
   description: "carpe_helper工具库文档",
   themeConfig: {
-    // sidebar: [],
+    // sidebar: [
+    //   {
+    //     text: "工具库",
+    //     collapsable: false,
+    //     children: [
+    //       {
+    //         text: "手写",
+    //         link: "/utils/write",
+    //       },
+    //       {
+    //         text: "数组相关",
+    //         link: "/utils/array",
+    //       },
+    //       {
+    //         text: "字符串相关",
+    //         link: "/utils/string",
+    //       }
+    //     ]
+    //   },
+    // ],
     nav: [
       {
         text: "工具库",
