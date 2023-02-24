@@ -10,7 +10,25 @@
 
 <body>
   <script>
-    console.log('this.window', this.window)
+    const add = (...args) => args.reduce((a, b) => a + b)
+
+    function currying(func) {
+      const args = []
+      return function result(...rest) {
+        if (rest.length === 0) {
+          return func(...args)
+        } else {
+          args.push(...rest)
+          return result
+        }
+      }
+    }
+
+    const sum = currying(add)
+
+    sum(1,2)(3)
+    console.log(sum())
+
   </script>
 </body>
 
